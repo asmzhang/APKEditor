@@ -16,19 +16,39 @@ if (JavaVersion.current().isJava8Compatible()) {
         }
     }
 }
-repositories {
-    mavenCentral()
-}
+
+//repositories {
+//    mavenCentral()
+//}
 
 dependencies {
-    //implementation("io.github.reandroid:ARSCLib:+")
-    compile(files("$rootProject.projectDir/libs/ARSCLib.jar"))
+    // //implementation("io.github.reandroid:ARSCLib:+")
+    // //https://github.com/REAndroid/ARSCLib.git
+    // //https://github.com/asmzhang/ARSCLib.git
+    // compile(files("$rootProject.projectDir/libs/ARSCLib.jar"))
 
-    // built from: https://github.com/REAndroid/smali-lib
-    compile(files("$rootProject.projectDir/libs/smali.jar"))
+    // // built from: https://github.com/REAndroid/smali-lib
+    // // built from: https://github.com/asmzhang/smali-lib
+    // compile(files("$rootProject.projectDir/libs/smali.jar"))
 
-    // built from: https://github.com/REAndroid/JCommand
-    compile(files("$rootProject.projectDir/libs/JCommand.jar"))
+    // // built from: https://github.com/REAndroid/JCommand
+    // // built from: https://github.com/asmzhang/JCommand
+    // compile(files("$rootProject.projectDir/libs/JCommand.jar"))
+
+//    // 使用 implementation 替换 compile
+//    implementation(files("libs/ARSCLib.jar"))
+//
+//    // 使用 implementation 替换 compile
+//    implementation(files("libs/smali.jar"))
+//
+//    // 使用 implementation 替换 compile
+//    implementation(files("libs/JCommand.jar"))
+
+    implementation(project(':ARSCLib'))
+
+    implementation(project(':smali-lib'))
+
+    implementation(project(':JCommand'))
 }
 
 processResources {
@@ -45,6 +65,17 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.FAIL
 }
 
+//task fatJar(type: Jar) {
+//    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+//    manifest {
+//        attributes(
+//                'Main-Class': 'com.reandroid.apkeditor.Main'
+//        )
+//    }
+//    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+//    with jar
+//}
+
 task fatJar(type: Jar) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
@@ -52,7 +83,9 @@ task fatJar(type: Jar) {
                 'Main-Class': 'com.reandroid.apkeditor.Main'
         )
     }
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    // 使用 runtimeClasspath 代替 compile
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
+
 
