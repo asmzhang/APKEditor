@@ -9,31 +9,41 @@ java {
     targetCompatibility JavaVersion.VERSION_1_8
 }
 
+//if (JavaVersion.current().isJava8Compatible()) {
+//    allprojects {
+//        tasks.compileJava {
+//            //options.addStringOption('-Xlint:unchecked', '-quiet')
+//        }
+//    }
+//}
+
 if (JavaVersion.current().isJava8Compatible()) {
     allprojects {
-        tasks.compileJava {
-            //options.addStringOption('-Xlint:unchecked', '-quiet')
+        tasks.withType(JavaCompile) {
+            // 这里可以加入编译选项，例如：
+//            options.compilerArgs << "-Xlint:unchecked" << "-quiet"
         }
     }
 }
+
 
 //repositories {
 //    mavenCentral()
 //}
 
 dependencies {
-    // //implementation("io.github.reandroid:ARSCLib:+")
-    // //https://github.com/REAndroid/ARSCLib.git
-    // //https://github.com/asmzhang/ARSCLib.git
-    // compile(files("$rootProject.projectDir/libs/ARSCLib.jar"))
-
-    // // built from: https://github.com/REAndroid/smali-lib
-    // // built from: https://github.com/asmzhang/smali-lib
-    // compile(files("$rootProject.projectDir/libs/smali.jar"))
-
-    // // built from: https://github.com/REAndroid/JCommand
-    // // built from: https://github.com/asmzhang/JCommand
-    // compile(files("$rootProject.projectDir/libs/JCommand.jar"))
+//     //implementation("io.github.reandroid:ARSCLib:+")
+//     //https://github.com/REAndroid/ARSCLib.git
+//     //https://github.com/asmzhang/ARSCLib.git
+//     compile(files("$rootProject.projectDir/libs/ARSCLib.jar"))
+//
+//     // built from: https://github.com/REAndroid/smali-lib
+//     // built from: https://github.com/asmzhang/smali-lib
+//     compile(files("$rootProject.projectDir/libs/smali.jar"))
+//
+//     // built from: https://github.com/REAndroid/JCommand
+//     // built from: https://github.com/asmzhang/JCommand
+//     compile(files("$rootProject.projectDir/libs/JCommand.jar"))
 
 //    // 使用 implementation 替换 compile
 //    implementation(files("libs/ARSCLib.jar"))
