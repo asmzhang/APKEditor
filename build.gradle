@@ -46,9 +46,12 @@ dependencies {
 
     implementation(project(':ARSCLib'))
 
-    implementation(project(':smali-lib'))
-
     implementation(project(':JCommand'))
+
+    implementation(project(':smali-lib:dexlib2'))
+    implementation(project(':smali-lib:baksmali'))
+    implementation(project(':smali-lib:smali'))
+
 }
 
 processResources {
