@@ -1,8 +1,8 @@
 rootProject.name = 'APKEditor'
 
-include ':ARSCLib'
-include ':smali-lib', ':smali-lib:util', ':smali-lib:dexlib2', ':smali-lib:baksmali', ':smali-lib:smali'
-include ':JCommand'
+//include ':ARSCLib'
+//include ':smali-lib', ':smali-lib:util', ':smali-lib:dexlib2', ':smali-lib:baksmali', ':smali-lib:smali'
+//include ':JCommand'
 
 // // 判断当前是否是根项目
 // if (rootDir == projectDir) {

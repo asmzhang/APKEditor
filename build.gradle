@@ -45,22 +45,22 @@ dependencies {
 //     // built from: https://github.com/asmzhang/JCommand
 //     compile(files("$rootProject.projectDir/libs/JCommand.jar"))
 
-//    // 使用 implementation 替换 compile
-//    implementation(files("libs/ARSCLib.jar"))
+    // 使用 implementation 替换 compile
+    implementation(files("libs/ARSCLib.jar"))
+
+    // 使用 implementation 替换 compile
+    implementation(files("libs/smali.jar"))
+
+    // 使用 implementation 替换 compile
+    implementation(files("libs/JCommand.jar"))
+
+//    implementation(project(':ARSCLib'))
 //
-//    // 使用 implementation 替换 compile
-//    implementation(files("libs/smali.jar"))
+//    implementation(project(':JCommand'))
 //
-//    // 使用 implementation 替换 compile
-//    implementation(files("libs/JCommand.jar"))
-
-    implementation(project(':ARSCLib'))
-
-    implementation(project(':JCommand'))
-
-    implementation(project(':smali-lib:dexlib2'))
-    implementation(project(':smali-lib:baksmali'))
-    implementation(project(':smali-lib:smali'))
+//    implementation(project(':smali-lib:dexlib2'))
+//    implementation(project(':smali-lib:baksmali'))
+//    implementation(project(':smali-lib:smali'))
 
 }
 
