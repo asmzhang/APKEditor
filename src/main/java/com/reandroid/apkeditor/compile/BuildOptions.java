@@ -26,6 +26,10 @@ import com.reandroid.jcommand.exceptions.CommandException;
 import java.io.File;
 
 
+/**
+ * 构建命令选项类
+ * 用于定义APK构建功能的各种命令行参数和选项
+ */
 @CommandOptions(
         name = "b",
         alternates = {"build"},
@@ -38,6 +42,10 @@ import java.io.File;
         })
 public class BuildOptions extends OptionsWithFramework {
 
+    /**
+     * 构建类型
+     * 可选值：xml, json, raw, sig
+     */
     @ChoiceArg(
             name = "-t",
             values = {
@@ -48,6 +56,10 @@ public class BuildOptions extends OptionsWithFramework {
             description = "build_types")
     public String type;
 
+    /**
+     * 提取native库选项
+     * 可选值：manifest, none, false, true
+     */
     @ChoiceArg(
             name = "-extractNativeLibs",
             values = {
@@ -59,15 +71,31 @@ public class BuildOptions extends OptionsWithFramework {
             description = "extract_native_libs")
     public String extractNativeLibs;
 
+    /**
+     * 验证资源目录标志
+     * 当设置为true时，验证资源目录的有效性
+     */
     @OptionArg(name = "-vrd", description = "validate_resources_dir", flag = true)
     public boolean validateResDir;
 
+    /**
+     * 资源目录名称
+     * 指定资源目录的名称
+     */
     @OptionArg(name = "-res-dir", description = "res_dir_name")
     public String resDirName;
 
+    /**
+     * 禁用缓存标志
+     * 当设置为true时，不使用缓存进行构建
+     */
     @OptionArg(name = "-no-cache", description = "build_no_cache", flag = true)
     public boolean noCache;
 
+    /**
+     * DEX库类型
+     * 可选值：internal（内置）, jf（JF库）
+     */
     @ChoiceArg(name = "-dex-lib",
             values = {
                     DEX_LIB_INTERNAL,
@@ -77,21 +105,41 @@ public class BuildOptions extends OptionsWithFramework {
     )
     public String dexLib = DEX_LIB_INTERNAL;
 
+    /**
+     * 签名目录
+     * 指定签名文件的存储目录
+     */
     @OptionArg(name = "-sig", description = "signatures_path")
     public File signaturesDirectory;
 
+    /**
+     * DEX配置文件标志
+     * 当设置为true时，处理DEX配置文件
+     */
     @OptionArg(name = "-dex-profile", flag = true, description = "encode_dex_profile")
     public boolean dexProfile;
 
+    /**
+     * 构造函数
+     */
     public BuildOptions() {
         super();
     }
 
+    /**
+     * 创建构建命令执行器
+     * @return 构建器实例
+     */
     @Override
     public Builder newCommandExecutor() {
         return new Builder(this);
     }
 
+    /**
+     * 验证输入文件
+     * @param isFile 是否必须是文件
+     * @param isDirectory 是否必须是目录
+     */
     @Override
     public void validateInput(boolean isFile, boolean isDirectory) {
         isFile = TYPE_SIG.equals(type);
@@ -100,6 +148,10 @@ public class BuildOptions extends OptionsWithFramework {
         validateSignaturesDirectory();
     }
 
+    /**
+     * 评估输入目录类型
+     * 根据输入目录的内容自动确定构建类型
+     */
     private void evaluateInputDirectoryType() {
         String type = this.type;
         if (type != null) {
@@ -107,13 +159,17 @@ public class BuildOptions extends OptionsWithFramework {
         }
         File file = inputFile;
         if(isRawInputDirectory(file)) {
+            // 如果是原始格式输入目录
             type = TYPE_RAW;
         } else if(isJsonInputDirectory(file)) {
+            // 如果是JSON格式输入目录
             type = TYPE_JSON;
             this.inputFile = getJsonInDir(this.inputFile);
         } else if (isXmlInputDirectory(file)) {
+            // 如果是XML格式输入目录
             type = TYPE_XML;
         } else if(signaturesDirectory != null){
+            // 如果指定了签名目录
             type = TYPE_SIG;
         } else {
             throw new CommandException("unknown_build_directory", file);
@@ -121,27 +177,46 @@ public class BuildOptions extends OptionsWithFramework {
         this.type = type;
     }
 
+    /**
+     * 验证输出文件
+     * @param isFile 是否必须是文件
+     */
     @Override
     public void validateOutput(boolean isFile) {
         super.validateOutput(true);
     }
 
+    /**
+     * 验证签名目录
+     */
     private void validateSignaturesDirectory() {
         if (TYPE_SIG.equals(type)) {
+            // 如果是签名类型，必须指定签名目录
             File file = this.signaturesDirectory;
             if(file == null) {
                 throw new CommandException("missing_sig_directory");
             }
             validateInputFile(file, false, true);
         } else if(this.signaturesDirectory != null) {
+            // 如果不是签名类型但指定了签名目录，抛出异常
             throw new CommandException("invalid_sig_parameter_combination");
         }
     }
+    
+    /**
+     * 根据输入文件生成输出文件路径
+     * @param file 输入文件
+     * @return 输出文件路径
+     */
     @Override
     public File generateOutputFromInput(File file) {
         return generateOutputFromInput(file, "_out.apk");
     }
 
+    /**
+     * 获取extractNativeLibs属性值
+     * @return extractNativeLibs属性值
+     */
     public String getExtractNativeLibs() {
         String extractNativeLibs = this.extractNativeLibs;
         if (extractNativeLibs == null) {
@@ -149,6 +224,12 @@ public class BuildOptions extends OptionsWithFramework {
         }
         return extractNativeLibs;
     }
+    
+    /**
+     * 检查是否为原始格式输入目录
+     * @param dir 要检查的目录
+     * @return 如果是原始格式输入目录则返回true
+     */
     private static boolean isRawInputDirectory(File dir){
         File file=new File(dir, AndroidManifest.FILE_NAME_BIN);
         if(!file.isFile()) {
@@ -156,10 +237,22 @@ public class BuildOptions extends OptionsWithFramework {
         }
         return file.isFile();
     }
+    
+    /**
+     * 检查是否为XML格式输入目录
+     * @param dir 要检查的目录
+     * @return 如果是XML格式输入目录则返回true
+     */
     private static boolean isXmlInputDirectory(File dir) {
         File manifest = new File(dir, AndroidManifest.FILE_NAME);
         return manifest.isFile();
     }
+    
+    /**
+     * 检查是否为JSON格式输入目录
+     * @param dir 要检查的目录
+     * @return 如果是JSON格式输入目录则返回true
+     */
     private static boolean isJsonInputDirectory(File dir) {
         if (isModuleDir(dir)) {
             return true;
@@ -175,6 +268,12 @@ public class BuildOptions extends OptionsWithFramework {
         }
         return false;
     }
+    
+    /**
+     * 检查是否为模块目录
+     * @param dir 要检查的目录
+     * @return 如果是模块目录则返回true
+     */
     private static boolean isModuleDir(File dir){
         if(!dir.isDirectory()){
             return false;
@@ -182,6 +281,12 @@ public class BuildOptions extends OptionsWithFramework {
         File file = new File(dir, AndroidManifest.FILE_NAME_JSON);
         return file.isFile();
     }
+    
+    /**
+     * 获取JSON输入目录
+     * @param dir 要搜索的目录
+     * @return JSON输入目录
+     */
     private static File getJsonInDir(File dir) {
         if(isModuleDir(dir)){
             return dir;

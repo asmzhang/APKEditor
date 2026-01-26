@@ -19,7 +19,10 @@ import com.reandroid.apkeditor.Options;
 import com.reandroid.jcommand.annotations.CommandOptions;
 import com.reandroid.jcommand.annotations.OptionArg;
 
-
+/**
+ * 应用克隆命令选项类
+ * 用于定义应用克隆功能的各种命令行参数和选项
+ */
 @CommandOptions(
         name = "c",
         alternates = {"clone"},
@@ -29,22 +32,48 @@ import com.reandroid.jcommand.annotations.OptionArg;
         })
 public class ClonerOptions extends Options {
 
+    /**
+     * 包名参数
+     * 用于指定克隆后应用的包名
+     */
     @OptionArg(name = "-package", description = "Package name")
     public String packageName;
 
+    /**
+     * 应用名称参数
+     * 用于指定克隆后应用的显示名称
+     */
     @OptionArg(name = "-app-name", description = "Application name")
     public String appName;
 
+    /**
+     * 应用图标参数
+     * 用于指定克隆后应用的图标文件路径
+     * 可以是单个图标文件路径，也可以是多个图标文件的路径
+     */
     @OptionArg(name = "-app-icon", description = "Application icon. File path of app icon(s).")
     public String appIcon;
 
+    /**
+     * 保持授权标识参数
+     * 当设置为true时，不根据包名重命名授权标识
+     * 仅在使用-package选项时生效
+     */
     @OptionArg(name = "-keep-auth", description = "Do not rename authorities as per package. \n  *Applies only when option -package used.")
     public boolean keepAuth;
 
+    /**
+     * 构造函数
+     * 初始化克隆选项对象
+     */
     public ClonerOptions(){
         super();
     }
 
+    /**
+     * 创建命令执行器
+     * @return 返回一个新的Cloner实例，用于执行克隆操作
+     */
     @Override
     public Cloner newCommandExecutor() {
         return new Cloner(this);

@@ -15,11 +15,11 @@
   */
 package com.reandroid.apkeditor;
 
-import com.reandroid.arsc.ARSCLib;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
+
+import com.reandroid.arsc.ARSCLib;
 
 public class APKEditor {
     private static Properties sProperties;
