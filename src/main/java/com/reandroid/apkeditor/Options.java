@@ -15,6 +15,9 @@
   */
 package com.reandroid.apkeditor;
 
+import java.io.File;
+import java.io.IOException;
+
 import com.reandroid.arsc.ARSCLib;
 import com.reandroid.jcommand.CommandHelpBuilder;
 import com.reandroid.jcommand.OptionStringBuilder;
@@ -23,14 +26,18 @@ import com.reandroid.jcommand.SubCommandParser;
 import com.reandroid.jcommand.annotations.OptionArg;
 import com.reandroid.jcommand.exceptions.CommandException;
 
-import java.io.File;
-import java.io.IOException;
-
 /**
  * 命令选项基类
  * 定义了所有命令选项的通用属性和方法
  */
 public class Options {
+
+    /** 签名选项 */
+    @OptionArg(name = "-s", flag = true, description = "enable signature (default)")
+    public boolean signature = true;
+
+    @OptionArg(name = "-sf", description = "signature file path")
+    public String signatureFile;
 
     /** 输入文件路径 */
     @OptionArg(name = "-i", description = "input_path")

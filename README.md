@@ -8,7 +8,7 @@ This tool uses [ARSCLib](https://github.com/REAndroid/ARSCLib) to edit any apk r
 
 ```ShellSession
 $ java -jar APKEditor.jar -h
-APKEditor - x.x.x
+APKEditor - x.x.x[app4-release_protected.apk](../../../../1/test/app4-release_protected.apk)
 https://github.com/REAndroid/APKEditor
 Android binary resource files editor
 Commands:

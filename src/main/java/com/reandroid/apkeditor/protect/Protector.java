@@ -72,11 +72,11 @@ public class Protector extends CommandExecutor<ProtectorOptions> {
         ProtectorOptions options = getOptions();
         // 删除输出文件
         delete(options.outputFile);
-        
+
         // 加载APK文件
         ApkModule module = ApkModule.loadApkFile(this, options.inputFile);
         module.setLoadDefaultFramework(false);
-        
+
         // 检查APK是否受保护
         String protect = Util.isProtected(module);
         if(protect != null){
@@ -84,10 +84,10 @@ public class Protector extends CommandExecutor<ProtectorOptions> {
             logMessage(protect);
             return;
         }
-        
+
         // 设置APK模块
         setApkModule(module);
-        
+
         // 执行各种混淆操作
         // 1. 混淆AndroidManifest.xml
         new ManifestConfuser(this).confuse();
@@ -99,10 +99,10 @@ public class Protector extends CommandExecutor<ProtectorOptions> {
         new TableConfuser(this).confuse();
         // 5. 混淆DEX文件
         new DexConfuser(this).confuse();
-        
+
         // 刷新资源表
         module.getTableBlock().refresh();
-        
+
         // 写入APK文件
         logMessage("Writing apk ...");
         if (options.confuse_zip) {
@@ -115,5 +115,83 @@ public class Protector extends CommandExecutor<ProtectorOptions> {
         }
         module.close();
         logMessage("Saved to: " + options.outputFile);
+
+		// 签名
+		signAPK(options.outputFile);
+    }
+
+    /**
+     * 签名APK文件
+     * @param apkFile 要签名的APK文件
+     */
+    private void signAPK(java.io.File apkFile) {
+
+        // 检查apksigner.jar是否存在
+        java.io.File apksignerJar = new java.io.File("libs/apksigner.jar");
+        if (!apksignerJar.exists()) {
+            logMessage("Warning: apksigner.jar not found, skipping signature");
+            return;
+        }
+
+        // 获取签名选项
+        boolean signature = getOptions().signature;
+        String signatureFile=getOptions().signatureFile;
+
+        if (signatureFile != null) {
+            // 使用指定文件
+        } else if (signature) {
+            // 使用默认签名
+            try {
+                // 构建签名命令
+                java.util.List<String> command = new java.util.ArrayList<>();
+                command.add("java");
+                command.add("-jar");
+                command.add(apksignerJar.getAbsolutePath());
+                command.add("sign");
+                command.add("--ks");
+                command.add("src/main/resources/testKey.jks");
+                command.add("--ks-pass");
+                command.add("pass:testtest");
+                command.add("--key-pass");
+                command.add("pass:admin@test");
+                command.add("--ks-key-alias");
+                command.add("test");
+                command.add("--out");
+                String path = apkFile.getAbsolutePath();
+                String signedApk = path.replaceFirst("\\.apk$", "_sign.apk");
+                command.add(signedApk);
+                command.add(apkFile.getAbsolutePath());
+
+                // 执行签名命令
+                logMessage("Signing APK...");
+                ProcessBuilder processBuilder = new ProcessBuilder(command);
+                processBuilder.redirectErrorStream(true);
+                Process process = processBuilder.start();
+
+                // 读取输出
+                try (java.io.BufferedReader reader = new java.io.BufferedReader(
+                        new java.io.InputStreamReader(process.getInputStream()))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        logMessage(line);
+                    }
+                }
+
+                // 等待命令执行完成
+                int exitCode = process.waitFor();
+                if (exitCode == 0) {
+                    java.io.File idsig = new java.io.File(signedApk + ".idsig");
+                    if (idsig.exists()) {
+                        idsig.delete();
+                    }
+                    logMessage("APK signed successfully");
+                } else {
+                    logMessage("Error signing APK: exit code " + exitCode);
+                }
+            } catch (Exception e) {
+                logMessage("Error signing APK: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
     }
 }

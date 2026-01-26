@@ -15,6 +15,12 @@
   */
 package com.reandroid.apkeditor.protect;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.reandroid.apkeditor.Options;
 import com.reandroid.jcommand.annotations.CommandOptions;
 import com.reandroid.jcommand.annotations.OptionArg;
@@ -22,12 +28,6 @@ import com.reandroid.utils.StringsUtil;
 import com.reandroid.utils.collection.ArrayCollection;
 import com.reandroid.utils.io.FileUtil;
 import com.reandroid.utils.io.IOUtil;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * 保护命令选项类
@@ -189,9 +189,14 @@ public class ProtectorOptions extends Options {
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
-        ArrayCollection<String> results = new ArrayCollection<>(
-                StringsUtil.split(full, '\n', true));
-        results.removeIf(StringsUtil::isEmpty);
+        ArrayCollection<String> results = new ArrayCollection<>();
+        for (String s : StringsUtil.split(full, '\n', true)) {
+            // 修剪字符串，去除首尾空白字符（包括\r）
+            s = s.trim();
+            if (!s.isEmpty()) {
+                results.add(s);
+            }
+        }
         return results.toArray(new String[results.size()]);
     }
     
